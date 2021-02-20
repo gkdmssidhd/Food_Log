@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>전체</title>
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/underscore@1.12.0/underscore-min.js"></script>
+<script>
+var listTemp = `<table>
+	<tr>
+		<th class="title">음식명</th>
+		<th class="title">음식점</th>
+		<th class="title">종류</th>
+		<th class="title">가격</th>
+		<th class="title">별점</th>
+	</tr>
+	<%
+	for(var i=0;i<food_list.length;i++) {
+		var food = food_list[i];
+		var str = "";
+	%>
+	<tr style="height:25px">
+		<td class="content"><a href='show.jsp?no=<%=food.no %>'><%=food.fname %></a></td>
+		<td class="content"><%=food.store %></td>
+		<td class="content" style="text-align:center"><%=food.type %></td>
+		<td class="content" style="text-align:right"><%=food.price %></td>
+		<td class="content" style="text-align:center">
+			<%
+			for(var s=0;s<food.star;s++){
+				str += "⭐";
+			}
+			%>
+			<%=str %>
+		</td>
+	</tr>
+	<%
+	} 
+	%>
+	</table>`;
+	
+$(function() {
+	var foodList = [];
+	function getList(cmd, searchData){
+		$.get("listServer.jsp?cmd="+cmd+"&searchData="+searchData, function(data, status){
+			if(status == 'success'){
+				var jsObj = JSON.parse(data.trim());
+				foodList = jsObj.food_list;
+				var compiled = _.template(listTemp);
+				$('#foodlistarea').html(compiled({food_list:foodList}));
+			} else {
+				document.write("<h2>서버 오류!!</h2>")
+			}
+		});
+	}
+	getList("hi", null);
+	
+	var searchAct = function(){
+		var searchFoodList = [];
+		var searchData = $('#searchData').val();
+		var searchType = $('#searchType').val();
+		
+		var patt = new RegExp(searchData, "gi");
+		for(foodie of foodList) {
+			if(foodie[searchType].match(patt)) {
+				searchFoodList.push(foodie);
+			}
+		}
+		
+		var compiled = _.template(listTemp);
+		console.log(compiled({food_list: searchFoodList}));
+		$('#foodlistarea').html( compiled({food_list: searchFoodList}) );
+	}
+	$('#searchBtn').click(searchAct);
+	
+});
+</script>
+
+<style>
+header, footer, section, table, div#foodlistarea {	/* 위치 확인 및 전체크기 맞추기용 */
+	border-radius: 0px;
+	padding: 0px;
+	box-sizing: border-box;
+	width: 900px; 
+	border-spacing: 0;
+	background-color : rgba(0,0,0,0);
+}
+
+ #searchBtn { /* 검색 버튼*/
+ 	background-color : rgba(0,0,0,0);
+	color:#707375;
+	font-size:15px;	
+	font-weight:bold;
+ }
+
+ #listBtn { /* 전체 버튼*/
+ 	background-color : rgba(0,0,0,0);
+ 	color:#707375;
+ 	font-size:15px;	
+ 	font-weight:bold;
+ }
+
+ #addBtn { /* 추가 버튼*/
+ 	background-color : rgba(0,0,0,0);
+ 	color:#707375;
+ 	font-size:15px;
+ 	font-weight:bold;
+ }
+ 
+ #searchBtn:hover{	
+	color:#5a721a;
+ }
+
+ #listBtn:hover {	
+ 	color:#5a721a;
+ }
+
+ #addBtn:hover {
+ 	color:#5a721a;
+ }
+ 
+.content {
+
+	border: 1px solid #707375;
+	padding: 5px;
+	font-size:15px;
+}
+
+.title {
+	border: 1px solid #707375;
+	font-size:15px;
+}
+
+td, th { /* 꾸미기 가능*/
+	box-sizing: border-box;
+	width: 150px;
+}
+
+.searchType { /* 검색하는곳 */
+	background-color : rgba(0,0,0,0);
+	text-align-last:center; 
+	font-size:15px;
+}
+
+select { /* 제일 위에 주제들 */
+	background-color : rgba(0,0,0,0);
+	margin:0 0 0 30px;
+	width: 150px;
+	font-size:30px; 
+}
+
+table {
+	margin:0 0 30px 0;
+}
+
+td.left {
+	width: 200px;
+	text-align: left;	
+}
+
+td.center {
+	width: 400px;
+	text-align: center;
+}
+
+td.right {
+	width: 300px;
+	text-align: center;
+}
+
+div.right{	/* 버튼 우측 정렬 */
+	text-align: right;
+}
+
+
+input.searchData {	/* 검색 텍스트 필드 사이즈 */
+	width: 380px
+	
+}
+.searchData { /* 검색 textarea */
+	
+	background-color : rgba(0,0,0,0);
+}
+
+fotter {
+		text-align: center;
+		clear:both;
+}
+
+form {
+	margin: 50px;
+}
+.container {
+  width: 140%;
+  height: 190%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  
+}
+
+.container::after {
+  width: 50%;
+  height: 180%;
+  content: "";
+  background: url("./pic/back.jpg");
+  background:attachment;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  opacity: 0.5;
+  border:1px solid gray;
+  background-size:contain;
+ 
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+<header>
+	<h2>Food Log</h2>
+</header>	
+
+	<section>
+		<table>
+			<tr>
+				<td class="left">
+					<div class="left" >
+						<select id="searchType" class="searchType">
+							<option value="fname" selected>음식명</option>
+							<option value="store">음식점</option>
+							<option value="type">종류</option>
+							<option value="price">가격</option>
+							<option value="star">별점</option>
+							<option value="date">날짜</option>
+						</select>
+					</div>
+				</td>
+				<td class="center">	
+					<input type="text" id="searchData" class="searchData">
+					<button type="button" class="btnstyle" id="searchBtn">검색</button>
+				</td>
+				<td class="rignt">
+					<button type="button" class="btnstyle" id="listBtn">전체보기</button>
+					<button type="button" class="btnstyle" id="addBtn" onclick="location.href='addFood.html'">추가</button>		
+				</td>
+			</tr>
+		</table>
+			<div id="foodlistarea">
+				<!-- 전체 리스트 나올 공간 -->
+			</div>
+	</section>
+</div>
+</body>
+</html>
