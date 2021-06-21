@@ -15,3 +15,7 @@ Life is Only Great food
 화면설계
 
 유스케이스 모델
+<p>
+  <a href="https://hahaeun.tistory.com/12?category=1211562" rel="nofollow">소스 코드</a>
+</p>
+
