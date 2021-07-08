@@ -9,9 +9,9 @@ Life is Only Great food
 <p>
   <a href="https://hahaeun.tistory.com/11" rel="nofollow">개발환경</a>
 </p>
-
-프로젝트 과정
-
+<p>
+  <a href="https://hahaeun.tistory.com/28" rel="nofollow">프로젝트 과정</a>
+</p>
 화면설계
 
 유스케이스 모델
